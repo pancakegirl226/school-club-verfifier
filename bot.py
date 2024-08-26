@@ -1,5 +1,4 @@
-import argparse
-import discord
+import argparse, discord, re
 
 # too lazy for if name = main... oh well!
 
@@ -35,22 +34,26 @@ async def on_message(message):
         return
     if message.content.startswith('$hello'):
         await message.channel.send('Hello!')
+    if message.content.startswith('$ticket'):
+        await make_ticket(message.author)
 
 
 # on member join
 @client.event
 async def on_member_join(member):
     # await chat.send(f'{member} hath joined the fray')
-    pass
+    await make_ticket(member)
 
 # make channel
 async def make_ticket(member):
-    channel = await guild.create_text_channel('test',
+    global guild
+    channel = await guild.create_text_channel(member.name,
                                               overwrites={
                                                   guild.default_role: discord.PermissionOverwrite(read_messages=False),
                                                   guild.me: discord.PermissionOverwrite(read_messages=True),
                                                   member: discord.PermissionOverwrite(read_messages=True)
                                               })
+    await channel.send('Test message')
 
 # truly start bot
 client.run(token)
